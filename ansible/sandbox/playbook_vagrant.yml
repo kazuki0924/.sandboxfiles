@@ -1,0 +1,8 @@
+---
+- hosts: all
+  roles:
+    - pyenv
+    - docker
+    - docker-compose
+    - linuxbrew
+    - packages

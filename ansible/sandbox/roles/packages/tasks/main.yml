@@ -1,0 +1,22 @@
+- name: Install packages with Linuxbrew
+  homebrew:
+    name:
+      - git
+      - bash
+      - zsh
+      - rg
+      - fd
+      - fzf
+    state: present
+    path: "{{ linuxbrew_dir }}"
+    update_homebrew: false
+
+- name: Install packages with Linuxbrew with --HEAD option
+  homebrew:
+    name:
+      - nvim
+    state: present
+    path: "{{ linuxbrew_dir }}"
+    install_options:
+      - HEAD
+    update_homebrew: false

@@ -1,0 +1,4 @@
+python_ver_to_install: 3.9.6
+pyenv_dir: "{{ ansible_env.HOME }}/.pyenv"
+pyenv_virtualenv_dir: "{{ pyenv_dir }}/plugins/pyenv-virtualenv"
+pyenv: "{{ pyenv_dir }}/bin/pyenv"

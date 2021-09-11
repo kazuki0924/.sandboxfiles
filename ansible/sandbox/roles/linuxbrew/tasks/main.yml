@@ -1,0 +1,14 @@
+- name: Check if Linubrew directory exists
+  stat:
+    path: "{{ linuxbrew_dir }}"
+  register: check_linuxbrew_dir
+
+- name: Set Linuxbrew path
+  shell: echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
+  when: not check_linuxbrew_dir.stat.exists
+
+- name: Install Linuxbrew # noqa risky-shell-pipe
+  shell: echo | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+  args:
+    creates: "{{ linuxbrew }}"
+  register: linuxbrew_installed

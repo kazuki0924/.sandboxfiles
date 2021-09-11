@@ -1,0 +1,35 @@
+- name: Install docker repository prerequisits
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    update_cache: yes
+  become: true
+
+- name: Add docker’s official gpg key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+  become: true
+
+- name: Add docker repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu focal stable
+  become: true
+
+- name: Install docker
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    update_cache: yes
+  become: true
+  register: docker_installed
+
+- name: Add userpermissions
+  command: "usermod -aG docker {{ ansible_env.USER }}"
+  become: true
+  when: docker_installed
