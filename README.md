@@ -1,3 +1,4 @@
+Todo: 
 - figure out azure credential issue with dynamic inventory azure_rm plugin
 
 ```
@@ -13,6 +14,5 @@ conditional_groups:
   sandbox: "'sandbox' in tags.project"
 ```
 
-# use portainer and port forward from azure vm without vs code
-
-# otherwise use caddy
+- use portainer and port forward from azure vm without vs code
+- otherwise use caddy
