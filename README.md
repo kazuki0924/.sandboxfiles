@@ -16,3 +16,4 @@ conditional_groups:
 
 - use portainer and port forward from azure vm without vs code
 - otherwise use caddy
+- use tags to be able to optionally include linuxbrew, portainer, nginx-proxy-manager etc
