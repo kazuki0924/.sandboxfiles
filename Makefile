@@ -74,6 +74,16 @@ azure/ssh_config:
 
 .PHONY: azure/ssh_config
 
+boilerplate/flask:
+> @ cp boilerplates/python-flask-gunicorn-nginx-docker-compose/ ~/flask-demo
+
+.PHONY: boilerplate/flask
+
+remove:
+> @ rm -rf ~/.sandboxfiles
+
+.PHONY: remove
+
 setup: vagrant/reset azure/init azure/deploy azure/provision
 
 .PHONY: setup
