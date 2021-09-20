@@ -15,7 +15,8 @@ Vagrant.configure("2") do |config|
   config.vm.box = "generic/ubuntu2004"
   config.vm.box_version = "3.4.0"
   config.vm.hostname = "demo-vm"
-  config.vm.network :forwarded_port, guest: 80, host: 4567
+  config.vm.network :forwarded_port, guest: 80, host: 4561
+  config.vm.network :forwarded_port, guest: 9000, host: 4562
   
   # https://computingforgeeks.com/how-to-enable-and-use-ssh-x11-forwarding-on-vagrant-instances/
   # used in https://github.com/elreydetoda/vagrant-files/
@@ -24,9 +25,12 @@ Vagrant.configure("2") do |config|
 
   # ansible
   config.vm.provision "ansible" do |ansible|
-    ansible.verbose = "vvvv"
+    ansible.verbose = "vvv"
     ansible.playbook = "ansible/sandbox/playbook_vagrant.yml"
   end
+
+  # private network
+  config.vm.network "private_network", ip: "192.168.10.10"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs

@@ -30,10 +30,10 @@
 
 - name: Setup pyenv path
   shell: |
-    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.profile
-    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.profile
-    echo 'eval "$(pyenv init --path)"' >> ~/.profile
-    echo 'eval "$(pyenv init -)"' >> ~/.profile
+    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+    echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
+    echo 'eval "$(pyenv init -)"' >> ~/.bashrc
   when: not check_pyenv_dir.stat.exists
 
 - name: Clone pyenv repository

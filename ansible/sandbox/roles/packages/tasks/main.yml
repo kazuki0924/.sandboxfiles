@@ -2,10 +2,15 @@
   homebrew:
     name:
       - git
+      - tmux
       - bash
       - zsh
+      - vim
+      - make
+      - curl
       - rg
       - fd
+      - fzy
       - fzf
     state: present
     path: "{{ linuxbrew_dir }}"
