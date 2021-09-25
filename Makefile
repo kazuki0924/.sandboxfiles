@@ -48,6 +48,12 @@ azure/login_with_service_principle:
 
 .PHONY: azure/login_with_service_principle
 
+azure/login_with_service_principle/echo:
+> @ cd ./terraform/azure
+> @ echo "az login --service-principal --username $$(jq -r ".clientId" secrets_azure_sandbox.json) --tenant $$(jq -r ".tenantId" secrets_azure_sandbox.json) --password secrets_azure_sandbox.pem"
+
+.PHONY: azure/login_with_service_principle/echo
+
 azure/deploy:
 > @ cd ./terraform/azure
 > @ terraform plan -out terraform_azure.tfplan
