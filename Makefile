@@ -36,7 +36,7 @@ azure/init:
 
 azure/create_service_principle:
 > @ cd ./terraform/azure
-> @ az ad sp create-for-rbac --name sandbox --create-cert >>secrets_azure_sandbox.json
+> @ az ad sp create-for-rbac --name sandbox --role Owner --sdk-auth --create-cert >>secrets_azure_sandbox.json
 > @ FILE="$$(fd . -e ".pem" -d 1 --changed-within 1min -1 ~)"
 > @ mv $$FILE secrets_azure_sandbox.pem
 
@@ -44,7 +44,7 @@ azure/create_service_principle:
   
 azure/login_with_service_principle:
 > @ cd ./terraform/azure
-> @ az login --service-principal --username $$(jq -r ".name" secrets_azure_sandbox.json) --tenant $$(jq -r ".tenant" secrets_azure_sandbox.json) --password secrets_azure_sandbox.pem
+> @ az login --service-principal --username $$(jq -r ".clientId" secrets_azure_sandbox.json) --tenant $$(jq -r ".tenantId" secrets_azure_sandbox.json) --password secrets_azure_sandbox.pem
 
 .PHONY: azure/login_with_service_principle
 
@@ -108,6 +108,12 @@ boilerplate/flask:
 > @ cp -r boilerplates/python-flask-gunicorn-nginx-docker-compose/ ~/flask-demo
 
 .PHONY: boilerplate/flask
+
+pbcopy/make:
+> @ echo "git clone https://github.com/kazuki0924/.sandboxfiles.git && cd .sandboxfiles"
+> @ echo "git clone https://github.com/kazuki0924/.sandboxfiles.git && cd .sandboxfiles" | pbcopy
+
+.PHONY: pbcopy/make
 
 remove:
 > @ rm -rf ~/.sandboxfiles

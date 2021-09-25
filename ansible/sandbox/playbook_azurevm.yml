@@ -1,6 +1,7 @@
 ---
 - hosts: sandbox
   roles:
+    - az
     - pyenv
     - docker
     - docker-compose

@@ -1,0 +1,27 @@
+- name: Install repository prerequisits
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    update_cache: yes
+  become: true
+
+- name: Add az’s official gpg key
+  apt_key:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+  become: true
+
+- name: Add az repository
+  apt_repository:
+    repo: deb https://packages.microsoft.com/repos/azure-cli focal stable
+  become: true
+
+- name: Install az
+  apt:
+    name:
+      - azure-cli
+    update_cache: yes
+  become: true
