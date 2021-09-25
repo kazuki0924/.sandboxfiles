@@ -24,15 +24,6 @@ resource "azurerm_resource_group" "sandbox-rg" {
   }
 }
 
-resource "random_id" "randomId" {
-  keepers = {
-    # Generate a new ID only when a new resource group is defined
-    resource_group = azurerm_resource_group.sandbox-rg.name
-  }
-
-  byte_length = 8
-}
-
 resource "azurerm_virtual_network" "sandbox-vn" {
   name                = "sandbox-vn"
   address_space       = ["10.0.0.0/16"]
@@ -56,7 +47,7 @@ resource "azurerm_public_ip" "sandbox-publicip" {
   name                = "sandboxPublicIP"
   location            = azurerm_resource_group.sandbox-rg.location
   resource_group_name = azurerm_resource_group.sandbox-rg.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
 
   tags = {
     environment = var.environment
@@ -70,14 +61,26 @@ resource "azurerm_network_security_group" "sandbox-nsg" {
   resource_group_name = azurerm_resource_group.sandbox-rg.name
 
   security_rule {
+    name                       = "App"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "Internet"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
     name                       = "SSH"
-    priority                   = 1001
+    priority                   = 150
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = "*"
+    source_address_prefix      = "Internet"
     destination_address_prefix = "*"
   }
 
@@ -109,6 +112,16 @@ resource "azurerm_network_interface" "sandbox-nic" {
 resource "azurerm_network_interface_security_group_association" "sandbox-nisga" {
   network_interface_id      = azurerm_network_interface.sandbox-nic.id
   network_security_group_id = azurerm_network_security_group.sandbox-nsg.id
+}
+
+# Generate random text for a unique storage account name
+resource "random_id" "randomId" {
+  keepers = {
+    # Generate a new ID only when a new resource group is defined
+    resource_group = azurerm_resource_group.sandbox-rg.name
+  }
+
+  byte_length = 8
 }
 
 resource "azurerm_storage_account" "sandbox-storageaccount" {

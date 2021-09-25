@@ -34,6 +34,20 @@ azure/init:
 
 .PHONY: azure/init
 
+azure/create_service_principle:
+> @ cd ./terraform/azure
+> @ az ad sp create-for-rbac --name sandbox --create-cert >>secrets_azure_sandbox.json
+> @ FILE="$$(fd . -e ".pem" -d 1 --changed-within 1min -1 ~)"
+> @ mv $$FILE secrets_azure_sandbox.pem
+
+.PHONY: azure/create_service_principle
+  
+azure/login_with_service_principle:
+> @ cd ./terraform/azure
+> @ az login --service-principal --username $$(jq -r ".name" secrets_azure_sandbox.json) --tenant $$(jq -r ".tenant" secrets_azure_sandbox.json) --password secrets_azure_sandbox.pem
+
+.PHONY: azure/login_with_service_principle
+
 azure/deploy:
 > @ cd ./terraform/azure
 > @ terraform plan -out terraform_azure.tfplan
@@ -73,6 +87,22 @@ azure/ssh_config:
 > @ ./scripts/add_azurevm_to_ssh_config.sh
 
 .PHONY: azure/ssh_config
+
+gcloud/init:
+> @ gcloud init
+
+.PHONY: gcloud/init
+
+gcloud/create_service_account:
+> @ gcloud iam service-accounts create sandbox
+> @ export PROJECT=$$(gcloud config list project --format=json | jq -r ".core.project")
+> @ cd ./terraform/gcloud
+> @ gcloud iam service-accounts keys create secrets_gcloud_sandbox.json --iam-account sandbox@$$PROJECT.iam.gserviceaccount.com
+> @ echo "Add the following to your rc files:"
+> @ echo "export GOOGLE_APPLICATION_CREDENTIALS="$$(pwd)/secrets_gcloud_sandbox.json""
+> @ echo "export GOOGLE_APPLICATION_CREDENTIALS="$$(pwd)/secrets_gcloud_sandbox.json"" | pbcopy
+
+.PHONY: gcloud/create_service_account
 
 boilerplate/flask:
 > @ cp -r boilerplates/python-flask-gunicorn-nginx-docker-compose/ ~/flask-demo
