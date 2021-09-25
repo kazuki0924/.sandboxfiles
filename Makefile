@@ -75,7 +75,7 @@ azure/ssh_config:
 .PHONY: azure/ssh_config
 
 boilerplate/flask:
-> @ cp boilerplates/python-flask-gunicorn-nginx-docker-compose/ ~/flask-demo
+> @ cp -r boilerplates/python-flask-gunicorn-nginx-docker-compose/ ~/flask-demo
 
 .PHONY: boilerplate/flask
 
