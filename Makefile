@@ -109,11 +109,11 @@ boilerplate/flask:
 
 .PHONY: boilerplate/flask
 
-pbcopy/make:
+clone/pbcopy:
 > @ echo "git clone https://github.com/kazuki0924/.sandboxfiles.git && cd .sandboxfiles"
 > @ echo "git clone https://github.com/kazuki0924/.sandboxfiles.git && cd .sandboxfiles" | pbcopy
 
-.PHONY: pbcopy/make
+.PHONY: clone/pbcopy
 
 remove:
 > @ rm -rf ~/.sandboxfiles
