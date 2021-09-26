@@ -12,6 +12,8 @@
       - fd
       - fzy
       - fzf
+      - jq
+      - yq
     state: present
     path: "{{ linuxbrew_dir }}"
     update_homebrew: false
