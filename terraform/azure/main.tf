@@ -14,54 +14,54 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "sandbox-rg" {
-  name     = var.resource_group_name
-  location = var.location
+resource "azurerm_resource_group" "azure-vm-sandbox-rg" {
+  name     = ${var.resource_group_name}
+  location = ${var.location}
 
   tags = {
-    environment = var.environment
-    project     = var.project
+    environment = ${var.environment}
+    project     =  ${var.project}
   }
 }
 
-resource "azurerm_virtual_network" "sandbox-vn" {
-  name                = "sandbox-vn"
+resource "azurerm_virtual_network" "azure-vm-sandbox-vn" {
+  name                = "azure-vm-sandbox-vn"
   address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.sandbox-rg.location
-  resource_group_name = azurerm_resource_group.sandbox-rg.name
+  location            = azurerm_resource_group.azure-vm-sandbox-rg.location
+  resource_group_name = azurerm_resource_group.azure-vm-sandbox-rg.name
 
   tags = {
-    environment = var.environment
-    project     = var.project
+    environment = ${var.environment}
+    project     = ${var.project}
   }
 }
 
-resource "azurerm_subnet" "sandbox-sn" {
-  name                 = "sandbox-subnet"
-  resource_group_name  = azurerm_resource_group.sandbox-rg.name
-  virtual_network_name = azurerm_virtual_network.sandbox-vn.name
+resource "azurerm_subnet" "azure-vm-sandbox-sn" {
+  name                 = "azure-vm-sandbox-subnet"
+  resource_group_name  = azurerm_resource_group.azure-vm-sandbox-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-vm-sandbox-vn.name
   address_prefixes     = ["10.0.2.0/24"]
 }
 
-resource "azurerm_public_ip" "sandbox-publicip" {
-  name                = "sandboxPublicIP"
-  location            = azurerm_resource_group.sandbox-rg.location
-  resource_group_name = azurerm_resource_group.sandbox-rg.name
+resource "azurerm_public_ip" "azure-vm-sandbox-publicip" {
+  name                = "azureVMsandboxPublicIP"
+  location            = azurerm_resource_group.azure-vm-sandbox-rg.location
+  resource_group_name = azurerm_resource_group.azure-vm-sandbox-rg.name
   allocation_method   = "Static"
 
   tags = {
-    environment = var.environment
-    project     = var.project
+    environment = ${var.environment}
+    project     = ${var.project}
   }
 }
 
-resource "azurerm_network_security_group" "sandbox-nsg" {
-  name                = "sandboxNetworkSecurityGroup"
-  location            = azurerm_resource_group.sandbox-rg.location
-  resource_group_name = azurerm_resource_group.sandbox-rg.name
+resource "azurerm_network_security_group" "azure-vm-sandbox-nsg" {
+  name                = "azureVMsandboxNetworkSecurityGroup"
+  location            = azurerm_resource_group.azure-vm-sandbox-rg.location
+  resource_group_name = azurerm_resource_group.azure-vm-sandbox-rg.name
 
   security_rule {
-    name                       = "App"
+    name                       = "NGINX"
     priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
@@ -74,7 +74,7 @@ resource "azurerm_network_security_group" "sandbox-nsg" {
 
   security_rule {
     name                       = "SSH"
-    priority                   = 150
+    priority                   = 101
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -85,73 +85,73 @@ resource "azurerm_network_security_group" "sandbox-nsg" {
   }
 
   tags = {
-    environment = var.environment
-    project     = var.project
+    environment = ${var.environment}
+    project     = ${var.project}
   }
 }
 
-resource "azurerm_network_interface" "sandbox-nic" {
-  name                = "sandboxNIC"
-  location            = azurerm_resource_group.sandbox-rg.location
-  resource_group_name = azurerm_resource_group.sandbox-rg.name
+resource "azurerm_network_interface" "azure-vm-sandbox-nic" {
+  name                = "azureVMsandboxNIC"
+  location            = azurerm_resource_group.azure-vm-sandbox-rg.location
+  resource_group_name = azurerm_resource_group.azure-vm-sandbox-rg.name
 
   ip_configuration {
-    name                          = "sandboxNicConfiguration"
-    subnet_id                     = azurerm_subnet.sandbox-sn.id
+    name                          = "azureVMsandboxNICConfiguration"
+    subnet_id                     = azurerm_subnet.azure-vm-sandbox-sn.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.sandbox-publicip.id
+    public_ip_address_id          = azurerm_public_ip.azure-vm-sandbox-publicip.id
   }
 
   tags = {
-    environment = var.environment
-    project     = var.project
+    environment = ${var.environment}
+    project     = ${var.project}
   }
 }
 
 # Connect the security group to the network interface
-resource "azurerm_network_interface_security_group_association" "sandbox-nisga" {
-  network_interface_id      = azurerm_network_interface.sandbox-nic.id
-  network_security_group_id = azurerm_network_security_group.sandbox-nsg.id
+resource "azurerm_network_interface_security_group_association" "azure-vm-sandbox-nisga" {
+  network_interface_id      = azurerm_network_interface.azure-vm-sandbox-nic.id
+  network_security_group_id = azurerm_network_security_group.azure-vm-sandbox-nsg.id
 }
 
 # Generate random text for a unique storage account name
 resource "random_id" "randomId" {
   keepers = {
     # Generate a new ID only when a new resource group is defined
-    resource_group = azurerm_resource_group.sandbox-rg.name
+    resource_group = azurerm_resource_group.azure-vm-sandbox-rg.name
   }
 
   byte_length = 8
 }
 
-resource "azurerm_storage_account" "sandbox-storageaccount" {
+resource "azurerm_storage_account" "azure-vm-sandbox-storageaccount" {
   name                     = "sbdiag${random_id.randomId.hex}"
-  location                 = azurerm_resource_group.sandbox-rg.location
-  resource_group_name      = azurerm_resource_group.sandbox-rg.name
+  location                 = azurerm_resource_group.azure-vm-sandbox-rg.location
+  resource_group_name      = azurerm_resource_group.azure-vm-sandbox-rg.name
   account_replication_type = "LRS"
   account_tier             = "Standard"
 
   tags = {
-    environment = var.environment
-    project     = var.project
+    environment = ${var.environment}
+    project     = ${var.project}
   }
 }
 
 # Create an SSH key
-resource "tls_private_key" "sandbox_ssh" {
+resource "tls_private_key" "azure-vm-sandbox_ssh" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
-resource "azurerm_linux_virtual_machine" "sandbox-vm" {
-  name                  = "sandboxVM"
-  location              = azurerm_resource_group.sandbox-rg.location
-  resource_group_name   = azurerm_resource_group.sandbox-rg.name
-  network_interface_ids = [azurerm_network_interface.sandbox-nic.id]
+resource "azurerm_linux_virtual_machine" "azure-sandbox-vm" {
+  name                  = "azureVMsandbox"
+  location              = azurerm_resource_group.azure-vm-sandbox-rg.location
+  resource_group_name   = azurerm_resource_group.azure-vm-sandbox-rg.name
+  network_interface_ids = [azurerm_network_interface.azure-vm-sandbox-nic.id]
   size                  = "Standard_DS2_v2"
 
   os_disk {
-    name                 = "sandboxOsDisk"
+    name                 = "azureVMsandboxOsDisk"
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
   }
@@ -163,7 +163,7 @@ resource "azurerm_linux_virtual_machine" "sandbox-vm" {
     version   = "20.04.202107200"
   }
 
-  computer_name                   = "sandbox-vm"
+  computer_name                   = "azureVMsandbox"
   admin_username                  = "sandbox"
   disable_password_authentication = true
 
@@ -173,11 +173,11 @@ resource "azurerm_linux_virtual_machine" "sandbox-vm" {
   }
 
   boot_diagnostics {
-    storage_account_uri = azurerm_storage_account.sandbox-storageaccount.primary_blob_endpoint
+    storage_account_uri = azurerm_storage_account.azure-vm-sandbox-storageaccount.primary_blob_endpoint
   }
 
   tags = {
-    environment = var.environment
-    project     = var.project
+    environment = ${var.environment}
+    project     = ${var.project}
   }
 }

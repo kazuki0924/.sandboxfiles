@@ -1,0 +1,9 @@
+---
+- name: .sandboxfiles
+  hosts: sandbox
+  become: false
+  tasks:
+    - name: Clone .sandboxfiles
+      git:
+        repo: "https://github.com/kazuki0924/.sandboxfiles.git"
+        dest: "{{ ansible_env.HOME }}/.sandboxfiles"

@@ -35,24 +35,19 @@ azure/init:
 .PHONY: azure/init
 
 azure/create_service_principle:
-> @ cd ./terraform/azure
-> @ az ad sp create-for-rbac --name sandbox --role Owner --sdk-auth --create-cert >>secrets_azure_sandbox.json
-> @ FILE="$$(fd . -e ".pem" -d 1 --changed-within 1min -1 ~)"
-> @ mv $$FILE secrets_azure_sandbox.pem
+> @ ./scripts/azure/create_service_principle.sh
 
 .PHONY: azure/create_service_principle
-  
+
+azure/scp_secrets_from_local_to_azure_vm:
+> @ ./scripts/azure/scp_secrets_from_local_to_azure_vm.sh
+
+.PHONY: azure/scp_secrets_from_local_to_azure_vm
+
 azure/login_with_service_principle:
-> @ cd ./terraform/azure
-> @ az login --service-principal --username $$(jq -r ".clientId" secrets_azure_sandbox.json) --tenant $$(jq -r ".tenantId" secrets_azure_sandbox.json) --password secrets_azure_sandbox.pem
+> @ ./scripts/azure/az_login_with_service_principle.sh
 
 .PHONY: azure/login_with_service_principle
-
-azure/login_with_service_principle/echo:
-> @ cd ./terraform/azure
-> @ echo "az login --service-principal --username $$(jq -r ".clientId" secrets_azure_sandbox.json) --tenant $$(jq -r ".tenantId" secrets_azure_sandbox.json) --password secrets_azure_sandbox.pem"
-
-.PHONY: azure/login_with_service_principle/echo
 
 azure/deploy:
 > @ cd ./terraform/azure
@@ -69,25 +64,22 @@ azure/destroy:
 
 azure/provision:
 > @ cd ./ansible/sandbox
-> @ ansible-playbook -i hosts playbook_azurevm.yml -vvvv
+> @ ansible-playbook -i hosts playbook_azurevm.yml -vv
 
 .PHONY: azure/provision
 
-AZURE_RG := "sandbox-rg"
-AZURE_VM := "sandboxVM"
-
 azure/ssh:
-> @ ssh sandbox@"$$(az vm show --resource-group $(AZURE_RG) --name $(AZURE_VM) -d --query publicIps -o tsv)"
+> @ ./scripts/azure/ssh_into_azure_vm.sh
 
 .PHONY: azure/ssh
 
-vagrant/check: vagrant/up vagrant/ssh
+vagrant/up_and_ssh: vagrant/up vagrant/ssh
 
-.PHONY: vagrant/check
+.PHONY: vagrant/up_and_ssh
 
-azure/check: azure/deploy azure/provision azure/ssh
+azure/deploy_and_ssh: azure/deploy azure/provision azure/ssh
 
-.PHONY: azure/check
+.PHONY: azure/deploy_and_ssh
 
 azure/ssh_config:
 > @ ./scripts/add_azurevm_to_ssh_config.sh
@@ -110,16 +102,15 @@ gcloud/create_service_account:
 
 .PHONY: gcloud/create_service_account
 
+sandboxfiles/clone_to_sandbox:
+> @ ansible-playbook -i hosts playbook_azurevm.yml -vv
+
+.PHONY: sandboxfiles/clone_to_sandbox
+
 boilerplate/flask:
 > @ cp -r boilerplates/python-flask-gunicorn-nginx-docker-compose/ ~/flask-demo
 
 .PHONY: boilerplate/flask
-
-clone/pbcopy:
-> @ echo "git clone https://github.com/kazuki0924/.sandboxfiles.git && cd .sandboxfiles"
-> @ echo "git clone https://github.com/kazuki0924/.sandboxfiles.git && cd .sandboxfiles" | pbcopy
-
-.PHONY: clone/pbcopy
 
 remove:
 > @ rm -rf ~/.sandboxfiles
