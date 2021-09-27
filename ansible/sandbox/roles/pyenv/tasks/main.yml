@@ -20,6 +20,7 @@
       - libffi-dev
       - liblzma-dev
       - git
+      - bash
     update_cache: yes
   become: true
 

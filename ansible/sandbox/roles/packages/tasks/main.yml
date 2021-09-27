@@ -1,17 +1,15 @@
+- name: Run brew link
+  command: brew link --overwrite openssl@1.1
+
 - name: Install packages with Linuxbrew
   homebrew:
     name:
-      - git
-      - tmux
       - bash
       - zsh
-      - vim
-      - make
-      - curl
       - rg
       - fd
-      - fzy
       - fzf
+      - fzy
       - jq
       - yq
     state: present

@@ -17,6 +17,11 @@ vagrant/up:
 
 .PHONY: vagrant/up
 
+vagrant/down:
+> @ vagrant destroy
+
+.PHONY: vagrant/down
+
 vagrant/reset:
 > @ vagrant destroy
 > @ vagrant up
@@ -28,43 +33,32 @@ vagrant/ssh:
 
 .PHONY: vagrant/ssh
 
+vagrant/up_and_ssh: vagrant/up vagrant/ssh
+
+.PHONY: vagrant/up_and_ssh
+
 azure/init:
 > @ cd ./terraform/azure
 > @ terraform init
 
 .PHONY: azure/init
 
-azure/create_service_principle:
-> @ ./scripts/azure/create_service_principle.sh
-
-.PHONY: azure/create_service_principle
-
-azure/scp_secrets_from_local_to_azure_vm:
-> @ ./scripts/azure/scp_secrets_from_local_to_azure_vm.sh
-
-.PHONY: azure/scp_secrets_from_local_to_azure_vm
-
-azure/login_with_service_principle:
-> @ ./scripts/azure/az_login_with_service_principle.sh
-
-.PHONY: azure/login_with_service_principle
-
-azure/deploy:
+azure/up:
 > @ cd ./terraform/azure
 > @ terraform plan -out terraform_azure.tfplan
 > @ terraform apply terraform_azure.tfplan
 
-.PHONY: azure/deploy
+.PHONY: azure/up
 
-azure/destroy:
+azure/down:
 > @ cd ./terraform/azure
 > @ terraform destroy
 
-.PHONY: azure/destroy
+.PHONY: azure/down
 
 azure/provision:
 > @ cd ./ansible/sandbox
-> @ ansible-playbook -i hosts playbook_azurevm.yml -vv
+> @ ansible-playbook -i host.azure-vm playbook_azure-vm.yml -vv
 
 .PHONY: azure/provision
 
@@ -73,18 +67,9 @@ azure/ssh:
 
 .PHONY: azure/ssh
 
-vagrant/up_and_ssh: vagrant/up vagrant/ssh
+azure/up_and_ssh: azure/up azure/provision azure/ssh
 
-.PHONY: vagrant/up_and_ssh
-
-azure/deploy_and_ssh: azure/deploy azure/provision azure/ssh
-
-.PHONY: azure/deploy_and_ssh
-
-azure/ssh_config:
-> @ ./scripts/add_azurevm_to_ssh_config.sh
-
-.PHONY: azure/ssh_config
+.PHONY: azure/up_and_ssh
 
 gcloud/init:
 > @ gcloud init
@@ -102,8 +87,9 @@ gcloud/create_service_account:
 
 .PHONY: gcloud/create_service_account
 
-sandboxfiles/clone_to_sandbox:
-> @ ansible-playbook -i hosts playbook_azurevm.yml -vv
+sandboxfiles/clone_to_vagrant:
+> @ cd ./ansible/sandbox
+> @ ansible-playbook -i host.vagrant playbook_sandboxfiles.yml -vv
 
 .PHONY: sandboxfiles/clone_to_sandbox
 

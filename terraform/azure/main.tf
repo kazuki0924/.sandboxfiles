@@ -163,7 +163,7 @@ resource "azurerm_linux_virtual_machine" "azure-sandbox-vm" {
     version   = "20.04.202107200"
   }
 
-  computer_name                   = "azureVMsandbox"
+  computer_name                   = "azure-vm-sandbox"
   admin_username                  = "sandbox"
   disable_password_authentication = true
 
