@@ -28,8 +28,8 @@ clean:
 .PHONY: clean
 
 build:
-> @ az acr login --name sandboxacrbasic.azurecr.io
-> @ az acr build --registry sandboxacrbasic.azurecr.io --image flask-demo:latest .
+> @ az acr login --name sandboxacrbasic
+> @ az acr build --registry sandboxacrbasic --image flask-demo:latest .
 
 .PHONY: build
 
