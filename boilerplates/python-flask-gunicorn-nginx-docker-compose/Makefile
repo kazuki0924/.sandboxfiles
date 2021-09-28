@@ -13,14 +13,25 @@ endif
 all: setup
 
 start:
-> @ docker-compose up --build
+> @ docker-compose up
 
 .PHONY: start
 
+start/local:
+> @ docker-compose -f docker-compose.local.yml up --build
+
+.PHONY: start/local
+
 clean: 
-> @ docker-compose down -v
+> @ docker-compose -f docker-compose.yml -f docker-compose.local.yml down -v
 
 .PHONY: clean
+
+build:
+> @ az acr login --name sandboxacrbasic.azurecr.io
+> @ az acr build --registry sandboxacrbasic.azurecr.io --image flask-demo:latest .
+
+.PHONY: build
 
 reset: clean start
 

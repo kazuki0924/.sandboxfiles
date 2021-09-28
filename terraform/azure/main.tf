@@ -11,16 +11,20 @@ terraform {
 }
 
 provider "azurerm" {
+  subscription_id = var.subscription_id
+  client_id       = var.sp_client_id
+  client_secret   = var.sp_client_secret
+  tenant_id       = var.sp_client_tenant_id
   features {}
 }
 
 resource "azurerm_resource_group" "azure-vm-sandbox-rg" {
-  name     = ${var.resource_group_name}
-  location = ${var.location}
+  name     = var.vm_resource_group_name
+  location = var.location
 
   tags = {
-    environment = ${var.environment}
-    project     =  ${var.project}
+    environment = var.environment
+    project     = var.project
   }
 }
 
@@ -31,8 +35,8 @@ resource "azurerm_virtual_network" "azure-vm-sandbox-vn" {
   resource_group_name = azurerm_resource_group.azure-vm-sandbox-rg.name
 
   tags = {
-    environment = ${var.environment}
-    project     = ${var.project}
+    environment = var.environment
+    project     = var.project
   }
 }
 
@@ -50,8 +54,8 @@ resource "azurerm_public_ip" "azure-vm-sandbox-publicip" {
   allocation_method   = "Static"
 
   tags = {
-    environment = ${var.environment}
-    project     = ${var.project}
+    environment = var.environment
+    project     = var.project
   }
 }
 
@@ -85,8 +89,8 @@ resource "azurerm_network_security_group" "azure-vm-sandbox-nsg" {
   }
 
   tags = {
-    environment = ${var.environment}
-    project     = ${var.project}
+    environment = var.environment
+    project     = var.project
   }
 }
 
@@ -103,8 +107,8 @@ resource "azurerm_network_interface" "azure-vm-sandbox-nic" {
   }
 
   tags = {
-    environment = ${var.environment}
-    project     = ${var.project}
+    environment = var.environment
+    project     = var.project
   }
 }
 
@@ -124,7 +128,7 @@ resource "random_id" "randomId" {
   byte_length = 8
 }
 
-resource "azurerm_storage_account" "azure-vm-sandbox-storageaccount" {
+resource "azurerm_storage_account" "azure-vm-sandbox-storage-account" {
   name                     = "sbdiag${random_id.randomId.hex}"
   location                 = azurerm_resource_group.azure-vm-sandbox-rg.location
   resource_group_name      = azurerm_resource_group.azure-vm-sandbox-rg.name
@@ -132,13 +136,13 @@ resource "azurerm_storage_account" "azure-vm-sandbox-storageaccount" {
   account_tier             = "Standard"
 
   tags = {
-    environment = ${var.environment}
-    project     = ${var.project}
+    environment = var.environment
+    project     = var.project
   }
 }
 
 # Create an SSH key
-resource "tls_private_key" "azure-vm-sandbox_ssh" {
+resource "tls_private_key" "azure-vm-sandbox-ssh" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
@@ -173,11 +177,34 @@ resource "azurerm_linux_virtual_machine" "azure-sandbox-vm" {
   }
 
   boot_diagnostics {
-    storage_account_uri = azurerm_storage_account.azure-vm-sandbox-storageaccount.primary_blob_endpoint
+    storage_account_uri = azurerm_storage_account.azure-vm-sandbox-storage-account.primary_blob_endpoint
   }
 
   tags = {
-    environment = ${var.environment}
-    project     = ${var.project}
+    environment = var.environment
+    project     = var.project
+  }
+}
+
+resource "azurerm_resource_group" "acr-sandbox-rg" {
+  name     = var.acr_resource_group_name
+  location = var.location
+
+  tags = {
+    environment = var.environment
+    project     = var.project
+  }
+}
+
+resource "azurerm_container_registry" "sandbox-acr" {
+  name                = "sandboxacrbasic"
+  location            = azurerm_resource_group.acr-sandbox-rg.location
+  resource_group_name = azurerm_resource_group.acr-sandbox-rg.name
+  sku                 = "Basic"
+  admin_enabled       = false
+
+  tags = {
+    environment = var.environment
+    project     = var.project
   }
 }

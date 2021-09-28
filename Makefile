@@ -44,6 +44,7 @@ azure/init:
 .PHONY: azure/init
 
 azure/up:
+> @ source "./env/azure/.env.dev"
 > @ cd ./terraform/azure
 > @ terraform plan -out terraform_azure.tfplan
 > @ terraform apply terraform_azure.tfplan
@@ -70,6 +71,12 @@ azure/ssh:
 azure/up_and_ssh: azure/up azure/provision azure/ssh
 
 .PHONY: azure/up_and_ssh
+
+azure/output:
+> @ cd ./terraform/azure
+> @ terraform output -json > ../../json/azure/secrets_terraform_outputs.json
+
+.PHONY: azure/outputs
 
 gcloud/init:
 > @ gcloud init

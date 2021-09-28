@@ -1,1 +1,3 @@
 linuxbrew_dir: /home/linuxbrew/.linuxbrew/bin
+linuxbrew: /home/linuxbrew/.linuxbrew/bin/brew
+

@@ -1,8 +1,9 @@
-version: '3.8'
+version: "3.8"
 
 services:
   web:
-    build: .
+    image: sandboxacrbasic.azurecr.io/flask-demo
+    container_name: flask-demo
     restart: always
     command: gunicorn --bind 0.0.0.0:5000 app:app
     expose:

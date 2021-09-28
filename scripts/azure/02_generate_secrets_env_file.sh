@@ -19,13 +19,13 @@ AZ_SP_CLIENT_SECRET="$(get_value clientSecret)"
 AZ_SP_CLIENT_TENANT_ID="$(get_value tenantId)"
 declare -r AZ_SUBSCRIPTION_ID AZ_SP_CLIENT_ID AZ_SP_CLIENT_SECRET AZ_SP_CLIENT_TENANT_ID
 
-cat > "${ENV_FILE}" <<EOF
+cat >"${ENV_FILE}" <<EOF
 export AZ_SUBSCRIPTION_ID="${AZ_SUBSCRIPTION_ID}"
 export AZ_SP_CLIENT_ID="${AZ_SP_CLIENT_ID}"
 export AZ_SP_CLIENT_SECRET="${AZ_SP_CLIENT_SECRET}"
 export AZ_SP_CLIENT_TENANT_ID="${AZ_SP_CLIENT_TENANT_ID}"
-export TZ_VAR_subscription_id="${AZ_SUBSCRIPTION_ID}"
-export TZ_VAR_sp_client_id="${AZ_SP_CLIENT_ID}"
-export TZ_VAR_sp_client_secret="${AZ_SP_CLIENT_SECRET}"
-export TZ_VAR_sp_client_tenant_id="${AZ_SP_CLIENT_TENANT_ID}"
+export TF_VAR_subscription_id="${AZ_SUBSCRIPTION_ID}"
+export TF_VAR_sp_client_id="${AZ_SP_CLIENT_ID}"
+export TF_VAR_sp_client_secret="${AZ_SP_CLIENT_SECRET}"
+export TF_VAR_sp_client_tenant_id="${AZ_SP_CLIENT_TENANT_ID}"
 EOF

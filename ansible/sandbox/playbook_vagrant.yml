@@ -2,8 +2,8 @@
 - hosts: all
   roles:
     - az
-    # - pyenv
-    # - docker
-    # - docker-compose
-    # - linuxbrew
-    # - packages
+    - pyenv
+    - docker
+    - docker-compose
+    - linuxbrew
+    - packages
