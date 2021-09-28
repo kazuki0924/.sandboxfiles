@@ -1,0 +1,12 @@
+{
+  "clientId": "",
+  "clientSecret": "",
+  "subscriptionId": "",
+  "tenantId": "",
+  "activeDirectoryEndpointUrl": "",
+  "resourceManagerEndpointUrl": "",
+  "activeDirectoryGraphResourceId": "",
+  "sqlManagementEndpointUrl": "",
+  "galleryEndpointUrl": "",
+  "managementEndpointUrl": ""
+}
