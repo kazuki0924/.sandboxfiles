@@ -12,6 +12,11 @@ endif
 
 all: setup
 
+vagrant/init:
+> @ vagrant init
+
+.PHONY: vagrant/init
+
 vagrant/up:
 > @ vagrant up --provision
 
@@ -36,6 +41,11 @@ vagrant/ssh:
 vagrant/up_and_ssh: vagrant/up vagrant/ssh
 
 .PHONY: vagrant/up_and_ssh
+
+vagrant/test@infra:
+> @ py.test --hosts=vagrant-sandbox testinfra/test_infra-sandbox.py -v
+
+.PHONY: vagrant/test@infra
 
 azure/init:
 > @ cd ./terraform/azure
@@ -64,7 +74,7 @@ azure/provision:
 .PHONY: azure/provision
 
 azure/ssh:
-> @ ./scripts/azure/ssh_into_azure_vm.sh
+> @ ssh azure-vm-sandbox
 
 .PHONY: azure/ssh
 
@@ -77,6 +87,11 @@ azure/output:
 > @ terraform output -json > ../../json/azure/secrets_terraform_outputs.json
 
 .PHONY: azure/outputs
+
+azure/test@infra:
+> @ py.test --hosts=azure-vm-sandbox testinfra/test_infra-sandbox.py -v
+
+.PHONY: azure/test@infra
 
 gcloud/init:
 > @ gcloud init
@@ -99,6 +114,12 @@ sandboxfiles/clone_to_vagrant:
 > @ ansible-playbook -i host.vagrant playbook_sandboxfiles.yml -vv
 
 .PHONY: sandboxfiles/clone_to_sandbox
+
+sandboxfiles/clone_to_azure_vm:
+> @ cd ./ansible/sandbox
+> @ ansible-playbook -i host.azure-vm playbook_sandboxfiles.yml -vv
+
+.PHONY: sandboxfiles/clone_to_azure_vm
 
 boilerplate/flask:
 > @ cp -r boilerplates/python-flask-gunicorn-nginx-docker-compose/ ~/flask-demo

@@ -9,7 +9,7 @@ declare -r IP
 
 tee -a "${HOME}/.ssh/config" <<EOF
 
-Host azureVMsandbox
+Host azure-vm-sandbox
   HostName ${IP}
   User sandbox
   IdentityFile ${HOME}/.ssh/id_rsa

@@ -9,7 +9,8 @@ services:
     expose:
       - 5000
   nginx:
-    build: ./nginx
+    image: sandboxacrbasic.azurecr.io/flask-demo-nginx
+    container_name: flask-demo-nginx
     restart: always
     ports:
       - 80:80

@@ -19,6 +19,7 @@ acr/login:
 
 acr/build: acr/login
 > @ az acr build --registry sandboxacrbasic --image flask-demo:latest .
+> @ az acr build --registry sandboxacrbasic --image flask-demo-nginx:latest ./nginx/
 
 .PHONY: acr/build
 
