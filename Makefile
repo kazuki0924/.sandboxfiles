@@ -47,25 +47,25 @@ vagrant/test@infra:
 
 .PHONY: vagrant/test@infra
 
-azure/init:
-> @ cd ./terraform/azure
+azure-vm/init:
+> @ cd ./terraform/azure/azure-vm
 > @ terraform init
 
-.PHONY: azure/init
+.PHONY: azure-vm/init
 
-azure/up:
-> @ source "./env/azure/.env.dev"
-> @ cd ./terraform/azure
+azure-vm/up:
+> @ source "./env/azure/azure-vm/.env.dev"
+> @ cd ./terraform/azure/azure-vm
 > @ terraform plan -out terraform_azure.tfplan
 > @ terraform apply terraform_azure.tfplan
 
-.PHONY: azure/up
+.PHONY: azure-vm/up
 
-azure/down:
-> @ cd ./terraform/azure
+azure-vm/down:
+> @ cd ./terraform/azure/azure-vm
 > @ terraform destroy
 
-.PHONY: azure/down
+.PHONY: azure-vm/down
 
 azure/provision:
 > @ cd ./ansible/sandbox
@@ -82,9 +82,9 @@ azure/up_and_ssh: azure/up azure/provision azure/ssh
 
 .PHONY: azure/up_and_ssh
 
-azure/output:
-> @ cd ./terraform/azure
-> @ terraform output -json > ../../json/azure/secrets_terraform_outputs.json
+azure-vm/output:
+> @ cd ./terraform/azure/azure-vm
+> @ terraform output -json > ../../../json/azure/azure-vm/secrets_terraform_outputs.json
 
 .PHONY: azure/outputs
 
